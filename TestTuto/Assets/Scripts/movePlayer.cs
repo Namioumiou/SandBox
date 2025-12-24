@@ -1,36 +1,35 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
-public class movePlayer : MonoBehaviour
+public class MovePlayer : MonoBehaviour
 {
     public float speed = 5f;
 
     private Rigidbody2D rb;
-    private Animator animator;
     private Vector2 movement;
 
-    void Start()
+    void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
     }
 
     void Update()
     {
-        // Récupération des inputs
-        movement.x = Input.GetAxisRaw("Horizontal");
-        movement.y = Input.GetAxisRaw("Vertical");
+        var keyboard = Keyboard.current;
+        if (keyboard == null) return;
 
-        // Empêche les diagonales plus rapides
+        movement = Vector2.zero;
+
+        if (keyboard.wKey.isPressed) movement.y = 1;
+        if (keyboard.sKey.isPressed) movement.y = -1;
+        if (keyboard.aKey.isPressed) movement.x = -1;
+        if (keyboard.dKey.isPressed) movement.x = 1;
+
         movement = movement.normalized;
-
-        // Animation
-        animator.SetFloat("MoveX", movement.x);
-        animator.SetFloat("MoveY", movement.y);
-        animator.SetBool("IsMoving", movement != Vector2.zero);
     }
 
     void FixedUpdate()
     {
-        rb.MovePosition(rb.position + movement * speed * Time.fixedDeltaTime);
+        rb.linearVelocity = movement * speed;
     }
 }
