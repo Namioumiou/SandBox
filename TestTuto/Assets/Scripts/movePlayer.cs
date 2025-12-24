@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class MovePlayer : MonoBehaviour
@@ -6,11 +6,13 @@ public class MovePlayer : MonoBehaviour
     public float speed = 5f;
 
     private Rigidbody2D rb;
+    private Animator animator;
     private Vector2 movement;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
     }
 
     void Update()
@@ -26,6 +28,17 @@ public class MovePlayer : MonoBehaviour
         if (keyboard.dKey.isPressed) movement.x = 1;
 
         movement = movement.normalized;
+
+        // 🔹 ANIMATIONS
+        bool isMoving = movement != Vector2.zero;
+
+        animator.SetBool("IsMoving", isMoving);
+
+        if (isMoving)
+        {
+            animator.SetFloat("MoveX", movement.x);
+            animator.SetFloat("MoveY", movement.y);
+        }
     }
 
     void FixedUpdate()
